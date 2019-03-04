@@ -27,57 +27,60 @@ router.all('*', function (req, res, next) {
 
 // Добавление документа
 router.post('/new', function (req, res) {
-	cache.flushAll();
-	var form = new formidable.IncomingForm();
+    cache.flushAll();
+    var form = new formidable.IncomingForm();
 
-	form.multiples = true;
+    form.multiples = true;
 
-	var properfields = {};
+    var properfields = {};
 
-	form.on('field', function (name, value) {
-		// console.log('on field');
-		if (!properfields[name]) {
-			properfields[name] = value;
-		} else {
-			if (properfields[name].constructor.toString().indexOf("Array") > -1) { // is array
-				properfields[name].push(value);
-			} else { // not array
-				var tmp = properfields[name];
-				properfields[name] = [];
-				properfields[name].push(tmp);
-				properfields[name].push(value);
-			}
-		}
-	});
+    form.on('field', function (name, value) {
+        // console.log('on field');
+        if (!properfields[name]) {
+            properfields[name] = value;
+        } else {
+            if (properfields[name].constructor.toString().indexOf("Array") > -1) { // is array
+                properfields[name].push(value);
+            } else { // not array
+                var tmp = properfields[name];
+                properfields[name] = [];
+                properfields[name].push(tmp);
+                properfields[name].push(value);
+            }
+        }
+    });
 
-	form.parse(req, function (err, fields, files) {
-		fields = properfields;
+    form.parse(req, function (err, fields, files) {
+            fields = properfields;
 
-		DEBUG_CLIENT(req.user.id, "Добавил документ");
+            DEBUG_CLIENT(req.user.id, "Добавил документ");
 
-		saveDoc(fields, req, res, function (savedDocParams) {
-			if (savedDocParams.success) {
+            saveDoc(fields, req, res, function (savedDocParams) {
+                if (savedDocParams.success) {
 
-				// if (files.files.length == undefined) {
-				//     files = {files: [files.files]};
-				// }
+                    // if (files.files.length == undefined) {
+                    //     files = {files: [files.files]};
+                    // }
 
-				for (var key in files.files) {
-					saveDocFile(files.files[key], savedDocParams.record_id);
-				}
-			}
-			res.render('docs/saved_record', savedDocParams);
-			return;
-		});
-	}
-	);
+                    for (var key in files.files) {
+                        saveDocFile(files.files[key], savedDocParams.record_id);
+                    }
+                }
+                res.end(JSON.stringify(savedDocParams));
+                return;
+            });
+        }
+    );
 })
 
 
 router.get('/new/', function (req, res) {
-	renderForm(req, res);
+    renderForm(req, res);
 })
 
+router.get('/records/', function (req, res) {
+    res.render('docs/records');
+});
 
 var renderForm = function (req, res) {
 	if (!user.can(req.user.admin, "add_doc")) {

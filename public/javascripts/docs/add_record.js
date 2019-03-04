@@ -117,4 +117,33 @@ $(function () {
 		$('#addIdentifiersBtn').prop('disabled', false);
 	}
 
+    function toServerData(formatData) {
+        for (var [key, value] of formatData.entries()) {
+            if (!value) {
+                formatData.set(key, null);
+            }
+        }
+    };
+
+    function reqListener () {
+    	if (JSON.parse(this.response).success) {
+            window.location.href = '/docs/records';
+		}
+    }
+
+	function onclickSubmitBtn(event) {
+        var form = document.getElementById('inputForm');
+        if (form.checkValidity()) {
+            event.preventDefault();
+            var formData = new FormData(form);
+            toServerData(formData);
+            var request = new XMLHttpRequest();
+            request.onload = reqListener;
+            request.open('POST', '/docs/new/', /* async = */ true);
+            request.send(formData)
+		}
+    };
+
+	 var submitBtn = document.getElementById('add_record_btn');
+	 submitBtn.addEventListener('click', onclickSubmitBtn);
 });

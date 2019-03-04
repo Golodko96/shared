@@ -2,7 +2,7 @@
 	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 border-bottom">
 		<div class="col-md-9 order-md-1">
 			<h4 class="mb-4">Добавление новой записи</h4>
-			<form role="form" method="POST" data-disable=true id="inputForm" action="/docs/new/" enctype="multipart/form-data">
+			<form role="form" id="inputForm" >
 				<div class="form-group row">
 					<div class="col-md-6 mb-3">
 						<label for="firstName">Сотрудник</label>
@@ -115,7 +115,7 @@
 				</div>
 
 				<hr class="mb-4">
-				<button class="btn btn-primary btn-lg btn-block mb-4" type="submit">Добавить запись</button>
+				<button id="add_record_btn" class="btn btn-primary btn-lg btn-block mb-4" type="submit">Добавить запись</button>
 			</form>
 		</div>
 	</div>
